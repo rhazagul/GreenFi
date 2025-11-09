@@ -1,0 +1,40 @@
+# Node modules
+node_modules/
+
+# Build output
+build/
+dist/
+artifacts/
+cache/
+
+# Hardhat files
+*.tsbuildinfo
+coverage/
+typechain/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# React frontend
+frontend/node_modules/
+frontend/build/
+frontend/.env
+frontend/.DS_Store
+
+# Optional: ignore test coverage reports
+coverage/
