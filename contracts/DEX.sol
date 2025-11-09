@@ -1,31 +1,28 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-contract Lending {
-    mapping(address => uint256) public collateral;
-    mapping(address => uint256) public debt;
-    uint256 public interestRate = 5; // 5% flat interest
-    address public owner;
+contract DEX {
+    mapping(address => uint256) public liquidity;
+    uint256 public totalLiquidity;
+    uint256 public exchangeRate = 1000; // 1 ETH = 1000 BDAG (example)
 
-    constructor() {
-        owner = msg.sender;
+    function provideLiquidity() external payable {
+        require(msg.value > 0, "Must provide BDAG");
+        liquidity[msg.sender] += msg.value;
+        totalLiquidity += msg.value;
     }
 
-    function depositCollateral() external payable {
-        require(msg.value > 0, "Must deposit BDAG");
-        collateral[msg.sender] += msg.value;
+    function swapETHForBDAG() external payable {
+        require(msg.value > 0, "Send ETH to swap");
+        uint256 bdagAmount = msg.value * exchangeRate;
+        require(address(this).balance >= bdagAmount, "Insufficient BDAG");
+        payable(msg.sender).transfer(bdagAmount);
     }
 
-    function borrow(uint256 amount) external {
-        require(collateral[msg.sender] >= amount * 2, "Insufficient collateral");
-        debt[msg.sender] += amount + (amount * interestRate / 100);
-        payable(msg.sender).transfer(amount);
-    }
-
-    function repay() external payable {
-        require(debt[msg.sender] > 0, "No debt");
-        require(msg.value >= debt[msg.sender], "Insufficient repayment");
-        debt[msg.sender] = 0;
+    function swapBDAGForETH(uint256 bdagAmount) external {
+        uint256 ethAmount = bdagAmount / exchangeRate;
+        require(address(this).balance >= ethAmount, "Insufficient ETH");
+        payable(msg.sender).transfer(ethAmount);
     }
 
     receive() external payable {}
